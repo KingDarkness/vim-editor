@@ -122,6 +122,7 @@ Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
 Plug 'sheerun/vim-polyglot'
 Plug 'schickling/vim-bufonly'
 Plug 'apzelos/blamer.nvim'
+Plug 'junegunn/vim-easy-align'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -798,8 +799,8 @@ augroup end
 
 " Applying codeAction to the selected region.
 " Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+xmap <leader>aa  <Plug>(coc-codeaction-selected)
+nmap <leader>aa  <Plug>(coc-codeaction-selected)
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
@@ -848,9 +849,9 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics.
-nnoremap <silent><nowait> <leader>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent><nowait> <leader>ae  :<C-u>CocList diagnostics<cr>
 " Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent><nowait> <leader>cmd  :<C-u>CocList commands<cr>
 " Find symbol of current document.
 nnoremap <silent><nowait> <leader>r  :<C-u>CocList outline<cr>
 " Search workspace symbols.
@@ -883,3 +884,10 @@ let g:grepper.jump          = 1
 let g:grepper.next_tool     = '<leader>nt'
 let g:grepper.simple_prompt = 1
 let g:grepper.quickfix      = 0
+" alignment
+" Start interactive EasyAlign in visual mode 
+xmap <leader>a <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object
+nmap <leader>a <Plug>(EasyAlign)
+
