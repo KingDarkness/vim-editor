@@ -2,9 +2,22 @@
   "codeLens.enable": true,
   "coc.preferences.extensionUpdateCheck": "daily",
   "suggest.noselect": false,
-  "coc.preferences.formatOnSaveFiletypes": [],
+  "coc.preferences.formatOnSaveFiletypes": [
+    "javascript",
+    "typescript",
+    "typescriptreact",
+    "typescript.tsx",
+    "css",
+    "markdown",
+    "html",
+    "json",
+    "dart"
+  ],
   "diagnostic.errorSign": "﯇",
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
   "diagnostic.hintSign": "",
+  "flutter.autoOpenDevLog": true,
+  "flutter.autoHideDevLog": true,
+  "flutter.openDevLogSplitCommand": "botright 10split"
 }
