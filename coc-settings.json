@@ -2,5 +2,9 @@
   "codeLens.enable": true,
   "coc.preferences.extensionUpdateCheck": "daily",
   "suggest.noselect": false,
-  "coc.preferences.formatOnSaveFiletypes": []
+  "coc.preferences.formatOnSaveFiletypes": [],
+  "diagnostic.errorSign": "﯇",
+  "diagnostic.warningSign": "",
+  "diagnostic.infoSign": "",
+  "diagnostic.hintSign": "",
 }
