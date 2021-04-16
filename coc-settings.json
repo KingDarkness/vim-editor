@@ -1,0 +1,6 @@
+{
+  "codeLens.enable": true,
+  "coc.preferences.extensionUpdateCheck": "daily",
+  "suggest.noselect": false,
+  "coc.preferences.formatOnSaveFiletypes": []
+}
