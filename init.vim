@@ -32,8 +32,6 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 "*****************************************************************************
 "" Plug install packages
 "*****************************************************************************
-Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
@@ -58,10 +56,6 @@ if exists('make')
         let g:make = 'make'
 endif
 Plug 'Shougo/vimproc.vim', {'do': g:make}
-
-"" Vim-Session
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
 
 "" Snippets
 Plug 'SirVer/ultisnips'
@@ -188,30 +182,22 @@ else
     set shell=/bin/sh
 endif
 
-" session management
-let g:session_directory = $HOME . '/.config/nvim/session/'
-let g:session_autoload = "yes"
-let g:session_autosave = "yes"
-let g:session_verbose_messages = 0
-let g:session_command_aliases = 1
-
+" session
 function OpenCurrentSession()
     if (argc() == 1 && isdirectory(argv()[0]))
-        execute 'OpenSession ' . substitute(getcwd(), '/', '_', 'g')
+        execute 'CocCommand session.load ' . substitute(getcwd(), '/', '_', 'g')
     endif
 endfunction
 
 
 function SaveCurrentSession()
-   execute 'SaveSession ' . substitute(getcwd(), '/', '_', 'g')
+   execute 'CocCommand session.save ' . substitute(getcwd(), '/', '_', 'g')
 endfunction
 
-nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :call SaveCurrentSession()<CR>
-nnoremap <leader>sd :DeleteSession<CR>
-nnoremap <leader>sc :CloseSession<CR>
-
+nnoremap <leader>so :CocList sessions<CR>
 autocmd VimEnter * nested call OpenCurrentSession()
+"autocmd VimEnter * nested call OpenCurrentSession()
 
 "*****************************************************************************
 "" Visual Settings
@@ -307,18 +293,7 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
-"" NERDTree configuration
-let g:NERDTreeChDirMode=2
-let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
-let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
-let g:NERDTreeShowBookmarks=1
-let g:nerdtree_tabs_focus_on_files=1
-let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
-let g:NERDTreeWinSize = 50
-let NERDTreeShowHidden=1
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
-nnoremap <silent> <F2> :NERDTreeFind<CR>
-nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
 " ripgrep
 nnoremap <silent> <leader>F :Rg<Space>
@@ -510,6 +485,7 @@ autocmd BufNewFile,BufRead *.php set iskeyword+=$
 " Include use statement
 nmap <Leader>pi :call phpactor#UseAdd()<CR>
 nmap <Leader>pcn :call phpactor#ClassNew()<CR>
+nmap <Leader>pcm :PhpactorContextMenu<CR>
 " Extract expression (normal mode)
 nmap <silent><Leader>pee :call phpactor#ExtractExpression(v:false)<CR>
 " Extract expression from selection
@@ -606,15 +582,13 @@ else
 endif
 
 " loading the plugin
-let g:webdevicons_enable = 1
-let g:webdevicons_enable_nerdtree = 1
 let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
 
 " map comment
-nmap <leader>/ <Plug>CommentaryLine
-xmap <leader>/ <Plug>CommentaryLine
-omap <leader>/ <Plug>CommentaryLine
+nmap <leader>/ <Plug>Commentary
+xmap <leader>/ <Plug>Commentary
+omap <leader>/ <Plug>Commentary
 
 let g:context#commentstring#table = {}
 
@@ -746,6 +720,8 @@ let g:coc_global_extensions = [
 \ 'coc-snippets',
 \ 'coc-prettier', 
 \ 'coc-json', 
+\ 'coc-explorer',
+\ 'coc-lists',
 \ ]
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
@@ -770,13 +746,13 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
-if (index(['vim','help'], &filetype) >= 0)
-execute 'h '.expand('<cword>')
-elseif (coc#rpc#ready())
-call CocActionAsync('doHover')
-else
-execute '!' . &keywordprg . " " . expand('<cword>')
-endif
+    if (index(['vim','help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+        call CocActionAsync('doHover')
+    else
+        execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
@@ -788,6 +764,24 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
+
+"explorer
+" let g:loaded_netrw  = 1
+" let g:loaded_netrwPlugin = 1
+" let g:loaded_netrwSettings = 1
+" let g:loaded_netrwFileHandlers = 1
+" let g:loaded_matchit = 1
+:nnoremap <F2> :CocCommand explorer<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
+augroup coc-explorer
+  if @% == '' || @% == '.'
+    autocmd User CocNvimInit bd
+    autocmd User CocNvimInit CocCommand explorer
+  endif
+augroup END
+if exists('#User#CocGitStatusChange')
+  doautocmd <nomodeline> User CocGitStatusChange
+endif
 
 augroup mygroup
 autocmd!
