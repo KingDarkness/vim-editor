@@ -1,5 +1,6 @@
 {
   "codeLens.enable": true,
+  "suggest.enablePreview": true,
   "coc.preferences.extensionUpdateCheck": "daily",
   "suggest.noselect": false,
   "coc.preferences.formatOnSaveFiletypes": [
@@ -78,5 +79,18 @@
         "F": "searchRecursive",
         "gf": "gotoSource:file",
         "gb": "gotoSource:buffer"
-  }
+  },
+  "intelephense.diagnostics.undefinedTypes": false,
+  "intelephense.files.exclude": [
+      "**/.git/**",
+      "**/.svn/**",
+      "**/.hg/**",
+      "**/CVS/**",
+      "**/.DS_Store/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/vendor/**/{Tests,tests}/**",
+      "**/.history/**",
+      "**/vendor/**/vendor/**"
+  ]
 }

@@ -183,6 +183,25 @@ else
     set shell=/bin/sh
 endif
 
+"explorer
+" let g:loaded_netrw  = 1
+" let g:loaded_netrwPlugin = 1
+" let g:loaded_netrwSettings = 1
+" let g:loaded_netrwFileHandlers = 1
+" let g:loaded_matchit = 1
+:nnoremap <F2> :CocCommand explorer<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
+augroup coc-explorer
+  if @% == '' || @% == '.'
+    autocmd User CocNvimInit bd
+    autocmd User CocNvimInit CocCommand explorer
+  endif
+augroup END
+if exists('#User#CocGitStatusChange')
+  doautocmd <nomodeline> User CocGitStatusChange
+endif
+
+
 " session
 function OpenCurrentSession()
     if (argc() == 1 && isdirectory(argv()[0]))
@@ -382,7 +401,8 @@ noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
-
+let g:fzf_preview_window = ['right:50%', 'ctrl-/']
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6  }  }
 " The Silver Searcher
 if executable('ag')
   let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
@@ -398,7 +418,7 @@ endif
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>p :FZF -m<CR>
+nnoremap <silent> <leader>p :Files<CR>
 "Recovery commands from history through FZF
 nmap <leader>y :History:<CR>
 
@@ -766,24 +786,6 @@ nmap <leader>rn <Plug>(coc-rename)
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
-"explorer
-" let g:loaded_netrw  = 1
-" let g:loaded_netrwPlugin = 1
-" let g:loaded_netrwSettings = 1
-" let g:loaded_netrwFileHandlers = 1
-" let g:loaded_matchit = 1
-:nnoremap <F2> :CocCommand explorer<CR>
-autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
-augroup coc-explorer
-  if @% == '' || @% == '.'
-    autocmd User CocNvimInit bd
-    autocmd User CocNvimInit CocCommand explorer
-  endif
-augroup END
-if exists('#User#CocGitStatusChange')
-  doautocmd <nomodeline> User CocGitStatusChange
-endif
-
 augroup mygroup
 autocmd!
 " Setup formatexpr specified filetype(s).
@@ -913,4 +915,3 @@ nmap <silent> <leader>tm :TestNearest<cr>
 nmap <silent> <leader>tf :TestFile<cr>
 nmap <silent> <leader>ta :TestSuite<cr>
 nmap <silent> <leader>tp :TestLast<cr>
-
