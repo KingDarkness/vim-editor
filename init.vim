@@ -118,6 +118,7 @@ Plug 'schickling/vim-bufonly'
 Plug 'apzelos/blamer.nvim'
 Plug 'junegunn/vim-easy-align'
 Plug 'vim-test/vim-test'
+Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 
 "*****************************************************************************
 "*****************************************************************************
