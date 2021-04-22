@@ -117,6 +117,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'schickling/vim-bufonly'
 Plug 'apzelos/blamer.nvim'
 Plug 'junegunn/vim-easy-align'
+Plug 'vim-test/vim-test'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -884,4 +885,32 @@ xmap <leader>a <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object
 nmap <leader>a <Plug>(EasyAlign)
+
+" test
+if has('nvim')
+  let test#strategy='neovim'
+else
+  let test#strategy='vimterminal'
+endif
+
+" for neovim
+let test#neovim#term_position = "topleft"
+let test#neovim#term_position = "vert"
+let test#neovim#term_position = "vert botright 100"
+" or for Vim8
+let test#vim#term_position = "belowright"
+
+function! DockerTransform(cmd) abort
+    let docker_container_name = '3t-product'
+    let phpunit_xml = '/var/www/html/phpunit.xml'
+    return 'docker exec ' . docker_container_name . ' phpdbg -qrr ' . a:cmd . ' -c ' . phpunit_xml . ' --debug --colors=always'
+endfunction
+
+let g:test#custom_transformations = {'docker': function('DockerTransform')}
+let g:test#transformation = 'docker'
+
+nmap <silent> <leader>tm :TestNearest<cr>
+nmap <silent> <leader>tf :TestFile<cr>
+nmap <silent> <leader>ta :TestSuite<cr>
+nmap <silent> <leader>tp :TestLast<cr>
 
