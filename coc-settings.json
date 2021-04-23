@@ -12,7 +12,8 @@
     "markdown",
     "html",
     "json",
-    "dart"
+    "dart",
+    "vue"
   ],
   "diagnostic.errorSign": "﯇",
   "diagnostic.warningSign": "",

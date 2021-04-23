@@ -119,6 +119,7 @@ Plug 'apzelos/blamer.nvim'
 Plug 'junegunn/vim-easy-align'
 Plug 'vim-test/vim-test'
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+Plug 'voldikss/vim-floaterm'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -184,35 +185,18 @@ else
     set shell=/bin/sh
 endif
 
-"explorer
-" let g:loaded_netrw  = 1
-" let g:loaded_netrwPlugin = 1
-" let g:loaded_netrwSettings = 1
-" let g:loaded_netrwFileHandlers = 1
-" let g:loaded_matchit = 1
-:nnoremap <F2> :CocCommand explorer<CR>
-autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
-augroup coc-explorer
-  if @% == '' || @% == '.'
-    autocmd User CocNvimInit bd
-    autocmd User CocNvimInit CocCommand explorer
-  endif
-augroup END
-if exists('#User#CocGitStatusChange')
-  doautocmd <nomodeline> User CocGitStatusChange
-endif
-
-
 " session
 function OpenCurrentSession()
     if (argc() == 1 && isdirectory(argv()[0]))
         execute 'CocCommand session.load ' . substitute(getcwd(), '/', '_', 'g')
+        sleep 500m
+        execute 'CocCommand explorer'
     endif
 endfunction
 
 
 function SaveCurrentSession()
-   execute 'CocCommand session.save ' . substitute(getcwd(), '/', '_', 'g')
+execute 'CocCommand session.save ' . substitute(getcwd(), '/', '_', 'g')
 endfunction
 
 nnoremap <leader>ss :call SaveCurrentSession()<CR>
@@ -230,7 +214,7 @@ set number
 let no_buffers_menu=1
 " Important!!
 if has('termguicolors')
-  set termguicolors
+set termguicolors
 endif
 " For dark version.
 set background=dark
@@ -244,20 +228,20 @@ set guioptions=egmrti
 set gfn=Monospace\ 10
 
 if has("gui_running")
-  if has("gui_mac") || has("gui_macvim")
-    set guifont=Menlo:h12
-    set transparency=7
-  endif
+if has("gui_mac") || has("gui_macvim")
+set guifont=Menlo:h12
+set transparency=7
+endif
 else
-  let g:CSApprox_loaded = 1
+let g:CSApprox_loaded = 1
 
-  " IndentLine
-  let g:indentLine_enabled = 1
-  let g:indentLine_concealcursor = 0
-  let g:indentLine_char = '┆'
-  let g:indentLine_faster = 1
+" IndentLine
+let g:indentLine_enabled = 1
+let g:indentLine_concealcursor = 0
+let g:indentLine_char = '┆'
+let g:indentLine_faster = 1
 
-  
+
 endif
 
 
@@ -288,7 +272,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 if exists("*fugitive#statusline")
-  set statusline+=%{fugitive#statusline()}
+set statusline+=%{fugitive#statusline()}
 endif
 
 " vim-airline
@@ -333,11 +317,11 @@ command! FixWhitespace :%s/\s\+$//e
 "" Functions
 "*****************************************************************************
 if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-    set textwidth=79
-  endfunction
+function s:setupWrapping()
+set wrap
+set wm=2
+set textwidth=79
+endfunction
 endif
 
 "*****************************************************************************
@@ -345,30 +329,31 @@ endif
 "*****************************************************************************
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
-  autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
+autocmd!
+autocmd BufEnter * :syntax sync maxlines=200
 augroup END
 
 "" Remember cursor position
 augroup vimrc-remember-cursor-position
-  autocmd!
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+autocmd!
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
 "" txt
 augroup vimrc-wrapping
-  autocmd!
-  autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+autocmd!
+autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
 augroup END
 
 "" make/cmake
 augroup vimrc-make-cmake
-  autocmd!
-  autocmd FileType make setlocal noexpandtab
-  autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+autocmd!
+autocmd FileType make setlocal noexpandtab
+autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
 set autoread
+au CursorHold * checktime
 
 "*****************************************************************************
 "" Mappings
@@ -406,15 +391,15 @@ let g:fzf_preview_window = ['right:50%', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6  }  }
 " The Silver Searcher
 if executable('ag')
-  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
-  set grepprg=ag\ --nogroup\ --nocolor
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+set grepprg=ag\ --nogroup\ --nocolor
 endif
 
 " ripgrep
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-  set grepprg=rg\ --vimgrep
-  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+set grepprg=rg\ --vimgrep
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
 endif
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
@@ -436,12 +421,12 @@ let g:tagbar_autofocus = 1
 " Disable visualbell
 set noerrorbells visualbell t_vb=
 if has('autocmd')
-  autocmd GUIEnter * set visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
 endif
 
 "" Copy/Paste/Cut
 if has('unnamedplus')
-  set clipboard=unnamed,unnamedplus
+set clipboard=unnamed,unnamedplus
 endif
 
 noremap YY "+y<CR>
@@ -449,9 +434,9 @@ noremap YY "+y<CR>
 noremap XX "+x<CR>
 
 if has('macunix')
-  " pbcopy for OSX copy/paste
-  vmap <C-x> :!pbcopy<CR>
-  vmap <C-c> :w !pbcopy<CR><CR>
+" pbcopy for OSX copy/paste
+vmap <C-x> :!pbcopy<CR>
+vmap <C-c> :w !pbcopy<CR><CR>
 endif
 
 "" Close buffer
@@ -495,8 +480,8 @@ let g:javascript_enable_domhtmlcss = 1
 
 " vim-javascript
 augroup vimrc-javascript
-  autocmd!
-  autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
+autocmd!
+autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
 augroup END
 
 autocmd FileType scss setl iskeyword+=@-@
@@ -519,10 +504,10 @@ vmap <silent><Leader>pem :<C-U>call phpactor#ExtractMethod()<CR>
 " python
 " vim-python
 augroup vimrc-python
-  autocmd!
-  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
-      \ formatoptions+=croq softtabstop=4
-      \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+autocmd!
+autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
+  \ formatoptions+=croq softtabstop=4
+  \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 augroup END
 
 " jedi-vim
@@ -560,7 +545,7 @@ let g:vim_vue_plugin_load_full_syntax = 1
 
 "" Include user's local vim config
 if filereadable(expand("~/.config/nvim/local_init.vim"))
-  source ~/.config/nvim/local_init.vim
+source ~/.config/nvim/local_init.vim
 endif
 
 "*****************************************************************************
@@ -569,38 +554,38 @@ endif
 
 " vim-airline
 if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
+let g:airline_symbols = {}
 endif
 
 if !exists('g:airline_powerline_fonts')
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline_left_sep          = '▶'
-  let g:airline_left_alt_sep      = '»'
-  let g:airline_right_sep         = '◀'
-  let g:airline_right_alt_sep     = '«'
-  let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-  let g:airline#extensions#readonly#symbol   = '⊘'
-  let g:airline#extensions#linecolumn#prefix = '¶'
-  let g:airline#extensions#paste#symbol      = 'ρ'
-  let g:airline_symbols.linenr    = '␊'
-  let g:airline_symbols.branch    = '⎇'
-  let g:airline_symbols.paste     = 'ρ'
-  let g:airline_symbols.paste     = 'Þ'
-  let g:airline_symbols.paste     = '∥'
-  let g:airline_symbols.whitespace = 'Ξ'
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_left_sep          = '▶'
+let g:airline_left_alt_sep      = '»'
+let g:airline_right_sep         = '◀'
+let g:airline_right_alt_sep     = '«'
+let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+let g:airline#extensions#readonly#symbol   = '⊘'
+let g:airline#extensions#linecolumn#prefix = '¶'
+let g:airline#extensions#paste#symbol      = 'ρ'
+let g:airline_symbols.linenr    = '␊'
+let g:airline_symbols.branch    = '⎇'
+let g:airline_symbols.paste     = 'ρ'
+let g:airline_symbols.paste     = 'Þ'
+let g:airline_symbols.paste     = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
 else
-  let g:airline#extensions#tabline#left_sep = ''
-  let g:airline#extensions#tabline#left_alt_sep = ''
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#left_alt_sep = ''
 
-  " powerline symbols
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_symbols.branch = ''
-  let g:airline_symbols.readonly = ''
-  let g:airline_symbols.linenr = ''
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
 endif
 
 " loading the plugin
@@ -615,86 +600,86 @@ omap <leader>/ <Plug>Commentary
 let g:context#commentstring#table = {}
 
 let g:context#commentstring#table.php = {
-			\ 'javaScript'  : '// %s',
-			\ 'phpRegion'   : '// %s',
-			\ 'cssStyle'    : '/*%s*/',
-			\}
+        \ 'javaScript'  : '// %s',
+        \ 'phpRegion'   : '// %s',
+        \ 'cssStyle'    : '/*%s*/',
+        \}
 
 let g:context#commentstring#table.vim = {
-			\ 'vimLuaRegion'     : '--%s',
-			\ 'vimPerlRegion'    : '#%s',
-			\ 'vimPythonRegion'  : '#%s',
-			\}
+        \ 'vimLuaRegion'     : '--%s',
+        \ 'vimPerlRegion'    : '#%s',
+        \ 'vimPythonRegion'  : '#%s',
+        \}
 
 let g:context#commentstring#table.html = {
-			\ 'javaScript'  : '//%s',
-			\ 'cssStyle'    : '/*%s*/',
-			\}
+        \ 'javaScript'  : '//%s',
+        \ 'cssStyle'    : '/*%s*/',
+        \}
 
 let g:context#commentstring#table.xhtml = g:context#commentstring#table.html
 
 let g:context#commentstring#table['javascript.jsx'] = {
-			\ 'jsComment' : '// %s',
-			\ 'jsImport' : '// %s',
-			\ 'jsxStatment' : '// %s',
-			\ 'jsxRegion' : '{/*%s*/}',
-			\ 'jsxTag' : '{/*%s*/}',
-			\}
+        \ 'jsComment' : '// %s',
+        \ 'jsImport' : '// %s',
+        \ 'jsxStatment' : '// %s',
+        \ 'jsxRegion' : '{/*%s*/}',
+        \ 'jsxTag' : '{/*%s*/}',
+        \}
 
 let g:context#commentstring#table['typescript.tsx'] = {
-			\ 'tsComment' : '// %s',
-			\ 'tsImport' : '// %s',
-			\ 'tsxStatment' : '// %s',
-			\ 'tsxRegion' : '{/*%s*/}',
-			\ 'tsxTag' : '{/*%s*/}',
-			\}
+        \ 'tsComment' : '// %s',
+        \ 'tsImport' : '// %s',
+        \ 'tsxStatment' : '// %s',
+        \ 'tsxRegion' : '{/*%s*/}',
+        \ 'tsxTag' : '{/*%s*/}',
+        \}
 
 
 let g:context#commentstring#table.vue = {
-			\ 'javaScript'  : '//%s',
-			\ 'cssStyle'    : '/*%s*/',
-			\}
+        \ 'javaScript'  : '//%s',
+        \ 'cssStyle'    : '/*%s*/',
+        \}
 
 let g:context#commentstring#table['javascript.vue'] = {
-			\ 'javaScript'  : '//%s',
-			\ 'cssStyle'    : '/*%s*/',
-			\}
+        \ 'javaScript'  : '//%s',
+        \ 'cssStyle'    : '/*%s*/',
+        \}
 
 if exists('g:loaded_context_commentstring')
-  finish
+finish
 endif
 
 
 augroup ContextCommentstringBootstrap
-	autocmd!
-	autocmd FileType * call <SID>Setup()
+autocmd!
+autocmd FileType * call <SID>Setup()
 augroup END
 
 
 function! s:Setup()
-	augroup ContextCommentstringEnabled
-		" Clear previous autocommands first in all cases, in case the filetype
-		" changed from something in the table, to something NOT in the table.
-		autocmd! CursorMoved <buffer>
-		if !empty(&filetype) && has_key(g:context#commentstring#table, &filetype)
-			let b:original_commentstring=&l:commentstring
-			autocmd CursorMoved <buffer> call <SID>UpdateCommentString()
-		endif
-	augroup END
+augroup ContextCommentstringEnabled
+    " Clear previous autocommands first in all cases, in case the filetype
+    " changed from something in the table, to something NOT in the table.
+    autocmd! CursorMoved <buffer>
+    if !empty(&filetype) && has_key(g:context#commentstring#table, &filetype)
+        let b:original_commentstring=&l:commentstring
+        autocmd CursorMoved <buffer> call <SID>UpdateCommentString()
+    endif
+augroup END
 endfunction
 
 
 function! s:UpdateCommentString()
-	let l:stack = synstack(line('.'), col('.'))
-	if !empty(l:stack)
-		for l:name in map(l:stack, "synIDattr(v:val, 'name')")
-			if has_key(g:context#commentstring#table[&filetype], l:name)
-				let &l:commentstring = g:context#commentstring#table[&filetype][l:name]
-				return
-			endif
-		endfor
-	endif
-	let &l:commentstring = b:original_commentstring
+let l:stack = synstack(line('.'), col('.'))
+if !empty(l:stack)
+    for l:name in map(l:stack, "synIDattr(v:val, 'name')")
+        if has_key(g:context#commentstring#table[&filetype], l:name)
+            let &l:commentstring = g:context#commentstring#table[&filetype][l:name]
+            return
+        endif
+    endfor
+endif
+let &l:commentstring = b:original_commentstring
 endfunction
 
 
@@ -704,26 +689,26 @@ let g:loaded_context_commentstring = 1
 " vue config
 let g:vue_pre_processors = 'detect_on_enter'
 let g:vim_vue_plugin_config = { 
-      \'syntax': {
-      \   'template': ['html'], 
-      \   'script': ['javascript'],
-      \   'style': ['css'],
-      \   'i18n': ['json'],
-      \   'docs': 'markdown',
-      \},
-      \'full_syntax': ['css', 'html'],
-      \'attribute': 1,
-      \'keyword': 1,
-      \}
+  \'syntax': {
+  \   'template': ['html'], 
+  \   'script': ['javascript'],
+  \   'style': ['css'],
+  \   'i18n': ['json'],
+  \   'docs': 'markdown',
+  \},
+  \'full_syntax': ['css', 'html'],
+  \'attribute': 1,
+  \'keyword': 1,
+  \}
 
 " coc config
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
@@ -749,7 +734,7 @@ let g:coc_global_extensions = [
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                          \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+                      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -768,13 +753,13 @@ nmap <silent> gr <Plug>(coc-references)
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-        execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-        call CocActionAsync('doHover')
-    else
-        execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
+if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+endif
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
@@ -861,6 +846,22 @@ noremap <S-Tab> :bp<CR>
 map gn :bn<cr>
 map gp :bp<cr>
 
+"explorer
+" let g:loaded_netrw  = 1
+" let g:loaded_netrwPlugin = 1
+" let g:loaded_netrwSettings = 1
+" let g:loaded_netrwFileHandlers = 1
+" let g:loaded_matchit = 1
+:nnoremap <F3> :CocCommand explorer<CR>
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
+
+augroup end
+if exists('#User#CocGitStatusChange')
+    doautocmd <nomodeline> User CocGitStatusChange
+endif
+
+
+
 " yank current directory path into the clipboard
 nnoremap yf :!echo -n % \| pbcopy %i<cr>:echo expand('%"d') "is yanked to clipboard"<cr>
 " mutiple cursors
@@ -873,7 +874,8 @@ inoremap <C-Z> <C-O>u
 inoremap <C-Y> <C-O><C-R>
 " autosave
 let g:auto_save = 1
-let g:auto_save_events = ["InsertLeave", "TextChanged"] 
+let g:auto_save_events = ["InsertLeave"] 
+" let g:auto_save_events = ["InsertLeave", "TextChanged"] 
 let g:auto_save_write_all_buffers = 1
 " grepper
 let g:grepper               = {}
@@ -891,9 +893,9 @@ nmap <leader>a <Plug>(EasyAlign)
 
 " test
 if has('nvim')
-  let test#strategy='neovim'
+let test#strategy='neovim'
 else
-  let test#strategy='vimterminal'
+let test#strategy='vimterminal'
 endif
 
 " for neovim
@@ -904,9 +906,9 @@ let test#neovim#term_position = "vert botright 100"
 let test#vim#term_position = "belowright"
 
 function! DockerTransform(cmd) abort
-    let docker_container_name = '3t-product'
-    let phpunit_xml = '/var/www/html/phpunit.xml'
-    return 'docker exec ' . docker_container_name . ' phpdbg -qrr ' . a:cmd . ' -c ' . phpunit_xml . ' --debug --colors=always'
+let docker_container_name = '3t-product'
+let phpunit_xml = '/var/www/html/phpunit.xml'
+return 'docker exec ' . docker_container_name . ' phpdbg -qrr ' . a:cmd . ' -c ' . phpunit_xml . ' --debug --colors=always'
 endfunction
 
 let g:test#custom_transformations = {'docker': function('DockerTransform')}
@@ -916,3 +918,11 @@ nmap <silent> <leader>tm :TestNearest<cr>
 nmap <silent> <leader>tf :TestFile<cr>
 nmap <silent> <leader>ta :TestSuite<cr>
 nmap <silent> <leader>tp :TestLast<cr>
+
+"floaterm
+let g:floaterm_width = 0.8
+let g:floaterm_height = 0.8
+let g:floaterm_autoclose = 1
+nnoremap <silent> <C-t> :FloatermToggle<CR>
+tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
+tnoremap <silent> <C-n> <C-\><C-n>
