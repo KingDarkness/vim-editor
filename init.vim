@@ -152,15 +152,21 @@ set tabstop=4
 set softtabstop=0
 set shiftwidth=4
 set expandtab
+set smartindent                         " Makes indenting smart
+set autoindent                          " Good auto indent
 
 "" Map leader to ,
 let mapleader=','
 
 "" Enable hidden buffers
 set hidden
+set nowrap
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
+
+set pumheight=10                        " Makes popup menu smaller
+set conceallevel=0                      " So that I can see `` in markdown files
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -189,7 +195,7 @@ endif
 function OpenCurrentSession()
     if (argc() == 1 && isdirectory(argv()[0]))
         execute 'CocCommand session.load ' . substitute(getcwd(), '/', '_', 'g')
-        sleep 500m
+        sleep 1000m
         execute 'CocCommand explorer'
     endif
 endfunction
@@ -210,6 +216,7 @@ autocmd VimEnter * nested call OpenCurrentSession()
 syntax on
 set ruler
 set number
+set cursorline                          " Enable highlighting of the current line
 
 let no_buffers_menu=1
 " Important!!
@@ -267,9 +274,34 @@ set titlestring=%F
 set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
 
 " Search mappings: These will make it so that going to the next one in a
+vnoremap <silent> <leader>f :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+
 " search will center on the line it's found in.
 nnoremap n nzzzv
 nnoremap N Nzzzv
+
+" Replace mappings
+vnoremap <leader>r ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
+
+" After searching for text, press this mapping to do a project wide find and
+" replace. It's similar to <leader>r except this one applies to all matches
+" across all files instead of just the current file.
+nnoremap <Leader>R
+  \ :let @s='\<'.expand('<cword>').'\>'<CR>
+  \ :Grepper -cword -noprompt<CR>
+  \ :cfdo %s/<C-r>s//g \| update
+  \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
+" The same as above except it works with a visual selection.
+xmap <Leader>R
+    \ "sy
+    \ gvgr
+    \ :cfdo %s/<C-r>s//g \| update
+     \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
 if exists("*fugitive#statusline")
 set statusline+=%{fugitive#statusline()}
@@ -738,7 +770,7 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nnoremap <silent> <F10> :CocDiagnostics<CR>
+nnoremap <silent> <F10> :CocDiagnostics<CR> 
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
@@ -769,8 +801,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+xmap <leader>fm  <Plug>(coc-format-selected)
+nmap <leader>fm  <Plug>(coc-format-selected)
 
 augroup mygroup
 autocmd!
