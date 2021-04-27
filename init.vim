@@ -216,7 +216,6 @@ autocmd VimEnter * nested call OpenCurrentSession()
 syntax on
 set ruler
 set number
-set cursorline                          " Enable highlighting of the current line
 
 let no_buffers_menu=1
 " Important!!
@@ -232,23 +231,30 @@ let g:gruvbox_material_better_performance = 1
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
-set gfn=Monospace\ 10
+set gfn=FiraCode\ Nerd\ Font\ 10
 
 if has("gui_running")
-if has("gui_mac") || has("gui_macvim")
-set guifont=Menlo:h12
-set transparency=7
-endif
+    set cursorline                          " Enable highlighting of the current line
+    if has("gui_mac") || has("gui_macvim")
+        set guifont=FiraCode\ Nerd\ Font:h12
+        set transparency=7
+    endif
 else
 let g:CSApprox_loaded = 1
+
+set nocursorline        " Don't paint cursor line
+set nocursorcolumn      " Don't paint cursor column
+set lazyredraw          " Wait to redraw
+set ttyfast
+set scrolljump=8        " Scroll 8 lines at a time at bottom/top
+let html_no_rendering=1 " Don't render italic, bold, links in HTML
+
 
 " IndentLine
 let g:indentLine_enabled = 1
 let g:indentLine_concealcursor = 0
 let g:indentLine_char = '┆'
 let g:indentLine_faster = 1
-
-
 endif
 
 
