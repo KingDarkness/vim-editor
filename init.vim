@@ -164,6 +164,7 @@ set nowrap
 " Some servers have issues with backup files, see #649.
 set nobackup
 set nowritebackup
+set noswapfile
 
 set pumheight=10                        " Makes popup menu smaller
 set conceallevel=0                      " So that I can see `` in markdown files
