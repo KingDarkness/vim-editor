@@ -120,6 +120,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'vim-test/vim-test'
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'voldikss/vim-floaterm'
+Plug 'tpope/vim-surround'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -257,8 +258,6 @@ let g:indentLine_concealcursor = 0
 let g:indentLine_char = '┆'
 let g:indentLine_faster = 1
 endif
-
-
 
 "" Disable the blinking cursor.
 set gcr=a:blinkon0
