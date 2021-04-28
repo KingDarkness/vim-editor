@@ -302,7 +302,8 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 " Replace mappings
-vnoremap <leader>r ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
+vnoremap <leader>R ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
+vnoremap <leader>r ""y:%s/<C-R>=expand('<cword>')<CR>//g<Left><Left>
 
 " After searching for text, press this mapping to do a project wide find and
 " replace. It's similar to <leader>r except this one applies to all matches
