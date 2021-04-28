@@ -197,7 +197,7 @@ function OpenCurrentSession()
     if (argc() == 1 && isdirectory(argv()[0]))
         execute 'CocCommand session.load ' . substitute(getcwd(), '/', '_', 'g')
         sleep 1000m
-        execute 'CocCommand explorer'
+        execute 'CocCommand explorer --preset pwd'
     endif
 endfunction
 
@@ -286,6 +286,16 @@ vnoremap <silent> <leader>f :<C-U>
   \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
   \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
   \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+" global search with CocSearch
+nnoremap <silent> <leader>FA ""y:CocSearch -F <C-R>=expand('<cword>')<CR><CR>
+nnoremap <silent> <leader>FD ""y:CocSearch -F <C-R>=expand('<cword>')<CR> -g <C-R>=GetAbsoluteForderPath()<CR>/**<CR>
+
+vnoremap <silent> <leader>FA ""y:CocSearch -F <C-R>=escape(@", '/\')<CR><CR>
+vnoremap <silent> <leader>FD ""y:CocSearch -F <C-R>=escape(@", '/\')<CR> -g <C-R>=GetAbsoluteForderPath()<CR>/**<CR>
+
+" global search with ripgrep
+nnoremap <silent> <leader>GA :Grepper -cword -noprompt<CR><CR>
+nnoremap <silent> <leader>GD :Grepper -cword -noprompt -cd .<C-R>=GetAbsoluteForderPath()<CR><CR><CR>
 
 " search will center on the line it's found in.
 nnoremap n nzzzv
@@ -297,14 +307,20 @@ vnoremap <leader>r ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 " After searching for text, press this mapping to do a project wide find and
 " replace. It's similar to <leader>r except this one applies to all matches
 " across all files instead of just the current file.
-nnoremap <Leader>R
+nnoremap <Leader>RA
   \ :let @s='\<'.expand('<cword>').'\>'<CR>
   \ :Grepper -cword -noprompt<CR>
   \ :cfdo %s/<C-r>s//g \| update
   \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
 
+nnoremap <Leader>RD
+  \ :let @s='\<'.expand('<cword>').'\>'<CR>
+  \ :Grepper -cword -noprompt -cd .<C-R>=GetAbsoluteForderPath()<CR><CR>
+  \ :cfdo %s/<C-r>s//g \| update
+  \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
 " The same as above except it works with a visual selection.
-xmap <Leader>R
+xmap <Leader>RA
     \ "sy
     \ gvgr
     \ :cfdo %s/<C-r>s//g \| update
@@ -338,9 +354,6 @@ cnoreabbrev Q q
 cnoreabbrev Qall qall
 
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
-
-" ripgrep
-nnoremap <silent> <leader>F :Rg<Space>
 
 " terminal emulation
 nnoremap <silent> <leader>sh :terminal<CR>
@@ -880,6 +893,7 @@ nnoremap <silent><nowait> <leader>cmd  :<C-u>CocList commands<cr>
 nnoremap <silent><nowait> <leader>r  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <leader>S  :<C-u>CocList -I symbols<cr>
+set sessionoptions+=globals
 
 " buffers
 noremap <Tab> :bn<CR>
@@ -893,7 +907,12 @@ map gp :bp<cr>
 " let g:loaded_netrwSettings = 1
 " let g:loaded_netrwFileHandlers = 1
 " let g:loaded_matchit = 1
-:nnoremap <F3> :CocCommand explorer<CR>
+:nnoremap <F3> :CocCommand explorer --preset pwd<CR>
+let g:coc_explorer_global_presets = {
+\   'pwd': {
+\     'root-uri': getcwd(),
+\   },
+\ }
 autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'coc-explorer') | q | endif
 
 augroup end
@@ -901,10 +920,17 @@ if exists('#User#CocGitStatusChange')
     doautocmd <nomodeline> User CocGitStatusChange
 endif
 
+function GetAbsoluteForderPath()
+    return substitute(expand('%:p:h'), getcwd(), '', '')
+endfunction
 
+
+function GetAbsolutePath()
+    return substitute(expand('%"d'), getcwd(), '', '')
+endfunction
 
 " yank current directory path into the clipboard
-nnoremap yf :!echo -n % \| pbcopy %i<cr>:echo expand('%"d') "is yanked to clipboard"<cr>
+nnoremap fp :!echo -n % \| pbcopy %i<cr>:echo expand('%"d') "is yanked to clipboard"<cr>
 " mutiple cursors
 nnoremap <silent> <C-j> :MultipleCursorsFind <C-R>/<CR>
 vnoremap <silent> <C-j> :MultipleCursorsFind <C-R>/<CR>
@@ -967,3 +993,8 @@ let g:floaterm_autoclose = 1
 nnoremap <silent> <C-t> :FloatermToggle<CR>
 tnoremap <silent> <C-t> <C-\><C-n>:FloatermToggle<CR>
 tnoremap <silent> <C-n> <C-\><C-n>
+
+" Default highlighting (see help :highlight and help :highlight-link)
+highlight multiple_cursors_cursor term=reverse cterm=reverse gui=reverse
+highlight link multiple_cursors_visual Visual
+
