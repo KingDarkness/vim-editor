@@ -120,5 +120,8 @@
     "constructor": "  ",
     "value": "  ",
     "enumMember": "  "
-  }
+  },
+  "snippets.ultisnips.directories": [
+      "UltiSnips"
+  ]
 }
