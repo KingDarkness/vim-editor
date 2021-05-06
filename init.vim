@@ -890,7 +890,7 @@ set sessionoptions+=globals
 
 " buffers
 noremap <Tab> :bn<CR>
-noremap <S-Tab> :bp<CR>
+noremap <S-Tab> :Buffers<CR>
 map gn :bn<cr>
 map gp :bp<cr>
 
