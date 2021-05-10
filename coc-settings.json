@@ -15,6 +15,8 @@
     "dart",
     "vue"
   ],
+  "prettier.disableLanguages": [
+  ],
   "diagnostic.errorSign": "﯇",
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
