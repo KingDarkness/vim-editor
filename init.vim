@@ -236,11 +236,55 @@ set gfn=FiraCode\ Nerd\ Font\ 10
 
 if has("gui_running")
     set cursorline                          " Enable highlighting of the current line
+    set guifont=FiraCode\ Nerd\ Font:h12
     if has("gui_mac") || has("gui_macvim")
-        set guifont=FiraCode\ Nerd\ Font:h12
         set transparency=7
-    endif
+    endi 
 else
+if exists('g:vv')
+    set guifont=FiraCodeNerdFontComplete-Regular:h12
+    VVset fontfamily=FiraCodeNerdFontComplete-Regular
+    VVset fontsize=12
+    VVset windowheight=100%
+    VVset windowwidth=100%
+    VVset windowleft=0
+    VVset windowtop=0
+endif
+
+if exists('g:neovide') 
+    set cursorline                          " Enable highlighting of the current line
+    set guifont=FiraCode\ Nerd\ Font:h10
+    let g:neovide_refresh_rate=140
+    let g:neovide_cursor_antialiasing=v:true
+    let g:neovide_transparency=0.9
+    let g:neovide_cursor_vfx_mode = "railgun"
+
+    " copy paste
+    vmap <D-c> y<Esc>i
+    vmap <D-x> d<Esc>i
+    imap <D-v> <Esc>pi
+    imap <D-y> <Esc>ddi
+    map <D-z> <Esc>
+    imap <D-z> <Esc>ui
+
+    " undo redo
+    nnoremap <D-z> u
+    nnoremap <D-y> <C-R>
+    inoremap <D-z> <C-O>u
+    inoremap <D-y> <C-O><C-R>
+
+    " save
+    nnoremap <silent><D-s> :<c-u>update<cr>
+    vnoremap <silent><D-s> <c-c>:update<cr>gv
+    inoremap <silent><D-s> <c-o>:update<cr>
+else
+    " undo redo
+    nnoremap <C-z> u
+    nnoremap <C-y> <C-R>
+    inoremap <C-z> <C-O>u
+    inoremap <C-y> <C-O><C-R>
+endif
+
 let g:CSApprox_loaded = 1
 
 set nocursorline        " Don't paint cursor line
@@ -611,16 +655,21 @@ let g:airline_left_sep          = '▶'
 let g:airline_left_alt_sep      = '»'
 let g:airline_right_sep         = '◀'
 let g:airline_right_alt_sep     = '«'
-let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-let g:airline#extensions#readonly#symbol   = '⊘'
+let g:airline#extensions#branch#prefix     = '' ", , ⎇
+let g:airline#extensions#readonly#symbol   = 'ﰸ'
 let g:airline#extensions#linecolumn#prefix = '¶'
 let g:airline#extensions#paste#symbol      = 'ρ'
 let g:airline_symbols.linenr    = '␊'
 let g:airline_symbols.branch    = '⎇'
 let g:airline_symbols.paste     = 'ρ'
 let g:airline_symbols.paste     = 'Þ'
-let g:airline_symbols.paste     = '∥'
+let g:airline_symbols.paste     = ''
 let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.linenr = '  '
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.maxlinenr = ' '
+let g:airline_symbols.maxlinenr = ' '
 else
 let g:airline#extensions#tabline#left_sep = ''
 let g:airline#extensions#tabline#left_alt_sep = ''
@@ -633,6 +682,11 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.maxlinenr = ''
 endif
 
 " loading the plugin
@@ -640,7 +694,7 @@ let g:webdevicons_enable_airline_tabline = 1
 let g:webdevicons_enable_airline_statusline = 1
 
 " map comment
-nmap <leader>/ <Plug>Commentary
+nmap <leader>/ <Plug>CommentaryLine
 xmap <leader>/ <Plug>Commentary
 omap <leader>/ <Plug>Commentary
 
@@ -927,11 +981,6 @@ nnoremap fp :!echo -n % \| pbcopy %i<cr>:echo expand('%"d') "is yanked to clipbo
 " mutiple cursors
 nnoremap <silent> <C-j> :MultipleCursorsFind <C-R>/<CR>
 vnoremap <silent> <C-j> :MultipleCursorsFind <C-R>/<CR>
-" undo redo
-nnoremap <C-Z> u
-nnoremap <C-Y> <C-R>
-inoremap <C-Z> <C-O>u
-inoremap <C-Y> <C-O><C-R>
 " autosave
 let g:auto_save = 1
 let g:auto_save_events = ["InsertLeave"] 
