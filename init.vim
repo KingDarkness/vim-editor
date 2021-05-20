@@ -244,7 +244,7 @@ else
 if exists('g:vv')
     set guifont=FiraCodeNerdFontComplete-Regular:h12
     VVset fontfamily=FiraCodeNerdFontComplete-Regular
-    VVset fontsize=12
+    VVset fontsize=10
     VVset windowheight=100%
     VVset windowwidth=100%
     VVset windowleft=0
